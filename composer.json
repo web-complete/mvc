@@ -1,0 +1,35 @@
+{
+  "name": "web-complete/mvc",
+  "description": "Micro MVC",
+  "license": "MIT",
+  "keywords": [
+    "micro mvc",
+    "mvc"
+  ],
+  "authors": [
+    {
+      "name": "Maxim Kasatkin",
+      "email": "mvkasatkin@gmail.com"
+    },
+    {
+      "name": "Sergey Saraikin",
+      "email": "ssaraikin@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.0.0",
+    "filp/whoops": "~2.1",
+    "symfony/http-foundation": "^3",
+    "nikic/fast-route": "^1",
+    "web-complete/core": "dev-master"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6",
+    "mvkasatkin/mocker": "^1"
+  },
+  "autoload": {
+    "psr-4": {
+      "WebComplete\\mvc\\": "src"
+    }
+  }
+}
