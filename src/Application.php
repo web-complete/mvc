@@ -13,7 +13,7 @@ use WebComplete\core\utils\alias\AliasService;
 use WebComplete\core\utils\container\ContainerAdapter;
 use WebComplete\core\utils\container\ContainerInterface;
 use WebComplete\core\utils\helpers\ClassHelper;
-use WebComplete\mvc\ErrorHandler\ErrorHandler;
+use WebComplete\mvc\errorHandler\ErrorHandler;
 use WebComplete\mvc\router\Router;
 use WebComplete\mvc\view\View;
 use WebComplete\mvc\view\ViewInterface;

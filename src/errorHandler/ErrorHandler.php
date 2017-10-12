@@ -1,6 +1,6 @@
 <?php
 
-namespace WebComplete\mvc\ErrorHandler;
+namespace WebComplete\mvc\errorHandler;
 
 use Whoops\Run;
 use Whoops\Handler\PrettyPageHandler;
