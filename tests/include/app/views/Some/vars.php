@@ -1,1 +1,1 @@
-<?=$actionVar ?>
+<?php /** @var $actionVar */?><?=$actionVar ?>
