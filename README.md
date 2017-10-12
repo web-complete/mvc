@@ -49,7 +49,7 @@ Example controller.php
 
 namespace app\controllers;
 
-class SomeController extends AbstractAdminController
+class SomeController extends AbstractController
 {
 
     protected $layout = '@app/views/layouts/main.php';
