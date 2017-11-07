@@ -20,8 +20,8 @@ return [
         ['GET', '/some/fail1', [null, 'index']],
         ['GET', '/some/fail2', [\tests\app\controllers\SomeController::class, null]],
     ],
-    'packageLocations' => [
-        '@app/packages',
+    'cubesLocations' => [
+        '@app/cubes',
     ],
     'definitions' => [
         'errorController' => \DI\object(\tests\app\controllers\ErrorController::class),

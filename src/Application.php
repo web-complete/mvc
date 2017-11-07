@@ -7,7 +7,7 @@ use DI\Scope;
 use Symfony\Component\Cache\Simple\FilesystemCache;
 use Symfony\Component\Cache\Simple\NullCache;
 use Symfony\Component\HttpFoundation\Request;
-use WebComplete\core\package\PackageManager;
+use WebComplete\core\cube\CubeManager;
 use WebComplete\core\utils\alias\AliasHelper;
 use WebComplete\core\utils\alias\AliasService;
 use WebComplete\core\utils\container\ContainerAdapter;
@@ -67,10 +67,10 @@ class Application
         ];
 
         $pmCache = \ENV === 'dev' ? new NullCache() : new FilesystemCache();
-        $packageManager = new PackageManager(new ClassHelper(), $pmCache);
-        $packageLocations = $this->config['packageLocations'] ?? [];
-        foreach ($packageLocations as $location) {
-            $packageManager->registerAll($aliasService->get($location), $definitions);
+        $cubeManager = new CubeManager(new ClassHelper(), $pmCache);
+        $cubesLocations = $this->config['cubesLocations'] ?? [];
+        foreach ($cubesLocations as $location) {
+            $cubeManager->registerAll($aliasService->get($location), $definitions);
         }
 
         return $definitions;

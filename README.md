@@ -34,8 +34,8 @@ return [
         ['GET', '/post/list', [\app\controllers\PostController::class, 'actionList']],
         ['POST', '/post/update', [\app\controllers\PostController::class, 'actionUpdate']],
     ],
-    'packageLocations' => [
-        '@app/packages',
+    'cubesLocations' => [
+        '@app/cubes',
     ],
     'definitions' => [
         'errorController' => \DI\object(\app\controllers\ErrorController::class),
