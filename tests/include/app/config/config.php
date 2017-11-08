@@ -25,5 +25,6 @@ return [
     ],
     'definitions' => [
         'errorController' => \DI\object(\tests\app\controllers\ErrorController::class),
+        \Psr\SimpleCache\CacheInterface::class => \DI\object(\Symfony\Component\Cache\Simple\NullCache::class),
     ]
 ];

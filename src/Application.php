@@ -68,20 +68,22 @@ class Application
             Request::class => Request::createFromGlobals(),
             ViewInterface::class => \DI\object(View::class)->scope(Scope::PROTOTYPE)
         ];
-
-        $pmCache = \ENV === 'dev' ? new NullCache() : new FilesystemCache();
-        $cubeManager = new CubeManager(new ClassHelper(), $pmCache);
-        $cubesLocations = $this->config['cubesLocations'] ?? [];
-        foreach ($cubesLocations as $location) {
-            $cubeManager->registerAll($aliasService->get($location), $definitions);
-        }
-
         return $definitions;
     }
 
     protected function afterInit()
     {
-        AliasHelper::setInstance($this->container->get(AliasService::class));
+        $aliasService = $this->container->get(AliasService::class);
+        AliasHelper::setInstance($aliasService);
+        $cubeManager = $this->getContainer()->get(CubeManager::class);
+        $cubesLocations = $this->config['cubesLocations'] ?? [];
+        $cubesDefinitions = [];
+        foreach ($cubesLocations as $location) {
+            $cubeManager->registerAll($aliasService->get($location), $cubesDefinitions);
+        }
+        foreach ($cubesDefinitions as $def => $value) {
+            $this->getContainer()->set($def, $value);
+        }
     }
 
     /**
