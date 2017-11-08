@@ -28,13 +28,16 @@ class Application
 
     /**
      * @param array $config
+     * @param bool $initErrorHandler
      *
      * @throws \Exception
      */
-    public function __construct(array $config)
+    public function __construct(array $config, $initErrorHandler = true)
     {
         $this->config = $config;
-        $this->initErrorHandler();
+        if ($initErrorHandler) {
+            $this->initErrorHandler();
+        }
         $definitions = \array_merge(
             $this->init(),
             $this->config['definitions'] ?? []
