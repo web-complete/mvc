@@ -21,6 +21,14 @@ class ApplicationTest extends MvcTestCase
         return $application;
     }
 
+    public function testGetConfig()
+    {
+        $application = $this->createApplication();
+        $config = $application->getConfig();
+        $this->assertTrue(\is_array($config));
+        $this->assertTrue(isset($config['definitions']));
+    }
+
     public function testHtmlString()
     {
         $application = $this->createApplication();

@@ -85,6 +85,14 @@ class Application
     }
 
     /**
+     * @return array
+     */
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
+    /**
      * @return ContainerInterface
      */
     public function getContainer(): ContainerInterface
