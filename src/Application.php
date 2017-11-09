@@ -4,15 +4,14 @@ namespace WebComplete\mvc;
 
 use DI\ContainerBuilder;
 use DI\Scope;
-use Symfony\Component\Cache\Simple\FilesystemCache;
-use Symfony\Component\Cache\Simple\NullCache;
 use Symfony\Component\HttpFoundation\Request;
 use WebComplete\core\cube\CubeManager;
 use WebComplete\core\utils\alias\AliasHelper;
 use WebComplete\core\utils\alias\AliasService;
 use WebComplete\core\utils\container\ContainerAdapter;
 use WebComplete\core\utils\container\ContainerInterface;
-use WebComplete\core\utils\helpers\ClassHelper;
+use WebComplete\core\utils\hydrator\Hydrator;
+use WebComplete\core\utils\hydrator\HydratorInterface;
 use WebComplete\mvc\errorHandler\ErrorHandler;
 use WebComplete\mvc\router\Router;
 use WebComplete\mvc\view\View;
@@ -63,10 +62,12 @@ class Application
     {
         $aliasService = new AliasService($this->config['aliases'] ?? []);
         $definitions = [
+            ApplicationConfig::class => new ApplicationConfig($this->config),
             AliasService::class => $aliasService,
             Router::class => new Router($this->config['routes'] ?? []),
             Request::class => Request::createFromGlobals(),
-            ViewInterface::class => \DI\object(View::class)->scope(Scope::PROTOTYPE)
+            ViewInterface::class => \DI\object(View::class)->scope(Scope::PROTOTYPE),
+            HydratorInterface::class => \DI\object(Hydrator::class),
         ];
         return $definitions;
     }
