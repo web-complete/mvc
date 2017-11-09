@@ -9,7 +9,6 @@ use tests\MvcTestCase;
 use WebComplete\core\utils\container\ContainerInterface;
 use WebComplete\mvc\Application;
 use WebComplete\mvc\front\FrontController;
-use WebComplete\mvc\router\exception\Exception;
 
 class ApplicationTest extends MvcTestCase
 {

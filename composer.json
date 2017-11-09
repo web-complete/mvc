@@ -20,6 +20,7 @@
     "php": ">=7.0.0",
     "filp/whoops": "~2.1",
     "symfony/http-foundation": "^3",
+    "symfony/filesystem": "^3.3",
     "nikic/fast-route": "^1",
     "web-complete/core": "^1"
   },
