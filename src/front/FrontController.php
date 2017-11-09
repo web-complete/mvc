@@ -62,6 +62,7 @@ class FrontController
      * @param string|null $uri
      *
      * @return Response
+     * @throws \WebComplete\mvc\router\exception\NotAllowedException
      * @throws \UnexpectedValueException
      * @throws \InvalidArgumentException
      * @throws \Psr\Container\NotFoundExceptionInterface
@@ -97,6 +98,7 @@ class FrontController
      * @throws \UnexpectedValueException
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \WebComplete\mvc\router\exception\NotAllowedException
      */
     public function processRoute(Route $route)
     {
@@ -116,14 +118,20 @@ class FrontController
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \InvalidArgumentException
      * @throws \UnexpectedValueException
+     * @throws \WebComplete\mvc\router\exception\NotAllowedException
      */
     public function processController(
         AbstractController $controller,
         string $actionMethod,
         array $params = []
     ) {
-        $result = \call_user_func_array([$controller, $actionMethod], $params);
-        $this->processResult($result);
+        if ($controller->beforeAction()) {
+            $result = \call_user_func_array([$controller, $actionMethod], $params);
+            $result = $controller->afterAction($result);
+            $this->processResult($result);
+        } else {
+            throw new NotAllowedException('Action is not allowed');
+        }
     }
 
     /**
@@ -134,6 +142,7 @@ class FrontController
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \UnexpectedValueException
      * @throws \InvalidArgumentException
+     * @throws \WebComplete\mvc\router\exception\NotAllowedException
      */
     public function processError(\Exception $exception = null, int $code)
     {
@@ -151,6 +160,7 @@ class FrontController
      * @throws \UnexpectedValueException
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \WebComplete\mvc\router\exception\NotAllowedException
      */
     protected function processResult($result)
     {

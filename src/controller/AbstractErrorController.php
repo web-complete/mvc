@@ -22,4 +22,12 @@ abstract class AbstractErrorController extends AbstractController
      * @return mixed
      */
     abstract public function action500(\Exception $exception = null);
+
+    /**
+     * @return bool
+     */
+    final public function beforeAction(): bool
+    {
+        return parent::beforeAction();
+    }
 }

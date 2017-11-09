@@ -58,7 +58,9 @@ class FrontControllerTest extends MvcTestCase
     {
         /** @var AbstractController $controller */
         $controller = Mocker::create(AbstractController::class, [
-            Mocker::method('some', 1)->with(['a'])->returns('aaa')
+            Mocker::method('beforeAction', 1)->returns(true),
+            Mocker::method('some', 1)->with(['a'])->returns('aaa'),
+            Mocker::method('afterAction', 1)->with(['aaa'])->returns('aaa'),
         ]);
         /** @var Router $router */
         $router = Mocker::create(Router::class);
@@ -91,5 +93,26 @@ class FrontControllerTest extends MvcTestCase
                 ->with([$controller, FrontController::$errorActions[403], [$exception]])->returns($response)
         ], [$router, $request, $response, $container]);
         $front->processError($exception, 403);
+    }
+
+    public function testProcessBeforeActionFalse()
+    {
+        $this->expectExceptionMessage('Action is not allowed');
+        /** @var AbstractController $controller */
+        $controller = Mocker::create(AbstractController::class, [
+            Mocker::method('beforeAction', 1)->returns(false),
+            Mocker::method('some', 0)->with(['a'])->returns('aaa')
+        ]);
+        /** @var Router $router */
+        $router = Mocker::create(Router::class);
+        $request = new Request();
+        $response = new Response();
+        /** @var ContainerInterface $container */
+        $container = Mocker::create(ContainerInterface::class);
+        /** @var FrontController $front */
+        $front = Mocker::create(FrontController::class, [
+            Mocker::method('processResult', 0)->with(['aaa'])
+        ], [$router, $request, $response, $container]);
+        $front->processController($controller, 'some', ['a']);
     }
 }

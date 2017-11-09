@@ -41,6 +41,24 @@ abstract class AbstractController
     }
 
     /**
+     * @return bool
+     */
+    public function beforeAction(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param $result
+     *
+     * @return mixed
+     */
+    public function afterAction($result)
+    {
+        return $result;
+    }
+
+    /**
      * @param $templatePath
      * @param array $vars
      *
