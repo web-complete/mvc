@@ -3,6 +3,7 @@
 namespace WebComplete\mvc\view;
 
 use WebComplete\core\utils\alias\AliasService;
+use WebComplete\mvc\assets\AssetManager;
 use WebComplete\mvc\controller\AbstractController;
 
 class View implements ViewInterface
@@ -18,13 +19,19 @@ class View implements ViewInterface
      * @var AliasService|null
      */
     private $aliasService;
+    /**
+     * @var AssetManager
+     */
+    private $assetManager;
 
     /**
      * @param AliasService $aliasService
+     * @param AssetManager $assetManager
      */
-    public function __construct(AliasService $aliasService)
+    public function __construct(AliasService $aliasService, AssetManager $assetManager)
     {
         $this->aliasService = $aliasService;
+        $this->assetManager = $assetManager;
     }
 
     /**
@@ -85,6 +92,14 @@ class View implements ViewInterface
     public function setController(AbstractController $controller)
     {
         $this->controller = $controller;
+    }
+
+    /**
+     * @return AssetManager
+     */
+    public function getAssetManager(): AssetManager
+    {
+        return $this->assetManager;
     }
 
     /**

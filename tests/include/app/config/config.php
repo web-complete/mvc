@@ -1,5 +1,7 @@
 <?php
 
+use Symfony\Component\Filesystem\Filesystem;
+
 return [
     'aliases' => [
         '@app' => \dirname(__DIR__ . '/..', 2),
@@ -26,5 +28,13 @@ return [
     'definitions' => [
         'errorController' => \DI\object(\tests\app\controllers\ErrorController::class),
         \Psr\SimpleCache\CacheInterface::class => \DI\object(\Symfony\Component\Cache\Simple\NullCache::class),
+        \WebComplete\mvc\assets\AssetManager::class => function (\DI\Container $di) {
+            $aliasService = $di->get(\WebComplete\core\utils\alias\AliasService::class);
+            return new \WebComplete\mvc\assets\AssetManager(
+                new Filesystem(),
+                $aliasService->get('@web'),
+                'assets'
+            );
+        }
     ]
 ];

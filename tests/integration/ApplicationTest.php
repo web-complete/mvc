@@ -8,7 +8,9 @@ use Symfony\Component\HttpFoundation\Response;
 use tests\MvcTestCase;
 use WebComplete\core\utils\container\ContainerInterface;
 use WebComplete\mvc\Application;
+use WebComplete\mvc\assets\AssetManager;
 use WebComplete\mvc\front\FrontController;
+use WebComplete\mvc\view\View;
 
 class ApplicationTest extends MvcTestCase
 {
@@ -172,6 +174,13 @@ class ApplicationTest extends MvcTestCase
         $container = Mocker::create(ContainerInterface::class);
         $application->setContainer($container);
         $this->assertSame($container, $application->getContainer());
+    }
+
+    public function testViewAssets()
+    {
+        $application = $this->createApplication();
+        $view = $application->getContainer()->get(View::class);
+        $this->assertInstanceOf(AssetManager::class, $view->getAssetManager());
     }
 
     /**
