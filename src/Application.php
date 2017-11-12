@@ -79,11 +79,17 @@ class Application
         $cubeManager = $this->getContainer()->get(CubeManager::class);
         $cubesLocations = $this->config['cubesLocations'] ?? [];
         $cubesDefinitions = [];
+
         foreach ($cubesLocations as $location) {
             $cubeManager->registerAll($aliasService->get($location), $cubesDefinitions);
         }
+
         foreach ($cubesDefinitions as $def => $value) {
             $this->getContainer()->set($def, $value);
+        }
+
+        foreach ($cubeManager->getCubes() as $cube) {
+            $cube->bootstrap($this->container);
         }
     }
 
