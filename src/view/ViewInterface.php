@@ -2,6 +2,7 @@
 
 namespace WebComplete\mvc\view;
 
+use WebComplete\mvc\assets\AssetManager;
 use WebComplete\mvc\controller\AbstractController;
 
 interface ViewInterface
@@ -34,4 +35,9 @@ interface ViewInterface
      * @return AbstractController|null
      */
     public function getController();
+
+    /**
+     * @return AssetManager
+     */
+    public function getAssetManager(): AssetManager;
 }
