@@ -3,6 +3,7 @@
 namespace WebComplete\mvc\assets;
 
 use Symfony\Component\Filesystem\Filesystem;
+use WebComplete\mvc\exception\Exception;
 
 class AssetManager
 {
@@ -46,7 +47,23 @@ class AssetManager
         if ($asset->publish) {
             $this->publishAsset($asset);
         }
-        $this->assets[] = $asset;
+        $this->assets[\get_class($asset)] = $asset;
+    }
+
+    /**
+     * @param string $assetClass
+     * @param $file
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function getPath(string $assetClass, $file): string
+    {
+        if (!isset($this->assets[$assetClass])) {
+            throw new Exception('Asset ' . $assetClass . ' is not registered');
+        }
+
+        return $this->getWebDir($this->assets[$assetClass]) . \ltrim($file, '/');
     }
 
     /**
