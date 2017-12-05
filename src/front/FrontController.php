@@ -125,13 +125,12 @@ class FrontController
         string $actionMethod,
         array $params = []
     ) {
-        if ($controller->beforeAction()) {
+        $result = $controller->beforeAction();
+        if ($result === true) {
             $result = \call_user_func_array([$controller, $actionMethod], $params);
             $result = $controller->afterAction($result);
-            $this->processResult($result);
-        } else {
-            throw new NotAllowedException('Action is not allowed');
         }
+        $this->processResult($result);
     }
 
     /**
@@ -178,6 +177,8 @@ class FrontController
             } elseif ($result->getStatusCode() !== 200) {
                 $this->processError(null, $result->getStatusCode());
             }
+        } elseif ($result === false) {
+            throw new NotAllowedException('Action is not allowed');
         }
     }
 }

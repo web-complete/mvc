@@ -111,7 +111,6 @@ class FrontControllerTest extends MvcTestCase
         $container = Mocker::create(ContainerInterface::class);
         /** @var FrontController $front */
         $front = Mocker::create(FrontController::class, [
-            Mocker::method('processResult', 0)->with(['aaa'])
         ], [$router, $request, $response, $container]);
         $front->processController($controller, 'some', ['a']);
     }
