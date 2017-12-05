@@ -41,7 +41,7 @@ abstract class AbstractController
     }
 
     /**
-     * @return bool
+     * @return bool|string|Response
      */
     public function beforeAction(): bool
     {
