@@ -44,10 +44,20 @@ class AssetManager
      */
     public function registerAsset(AbstractAsset $asset)
     {
-        if ($asset->publish) {
-            $this->publishAsset($asset);
+        $assetClass = \get_class($asset);
+        if (!isset($this->assets[$assetClass])) {
+            foreach ($asset->getAssetsBefore() as $assetBefore) {
+                $this->registerAsset($assetBefore);
+            }
+
+            if ($asset->publish) {
+                $this->publishAsset($asset);
+            }
+            $this->assets[$assetClass] = $asset;
+            foreach ($asset->getAssetsAfter() as $assetAfter) {
+                $this->registerAsset($assetAfter);
+            }
         }
-        $this->assets[\get_class($asset)] = $asset;
     }
 
     /**
