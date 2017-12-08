@@ -61,8 +61,10 @@ class Application
     protected function init(): array
     {
         $aliasService = new AliasService($this->config['aliases'] ?? []);
+        $applicationConfig = new ApplicationConfig($this->config);
+
         $definitions = [
-            ApplicationConfig::class => new ApplicationConfig($this->config),
+            ApplicationConfig::class => $applicationConfig,
             AliasService::class => $aliasService,
             Router::class => new Router($this->config['routes'] ?? []),
             Request::class => Request::createFromGlobals(),

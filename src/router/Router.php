@@ -12,14 +12,14 @@ class Router
 {
 
     /**
-     * @var array
+     * @var Routes
      */
     private $config;
 
     /**
      * @param array $config
      */
-    public function __construct(array $config)
+    public function __construct(Routes $config)
     {
         $this->config = $config;
     }
