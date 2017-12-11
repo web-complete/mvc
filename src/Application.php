@@ -24,6 +24,7 @@ class Application
 
     /** @var ContainerInterface */
     protected $container;
+    protected $errorHandler;
 
     /**
      * @param array $config
@@ -49,9 +50,9 @@ class Application
      */
     protected function initErrorHandler()
     {
-        $errorHandler = new ErrorHandler();
-        $errorHandler->register();
-        $errorHandler->setErrorPagePath($this->config['errorPagePath'] ?? '');
+        $this->errorHandler = new ErrorHandler();
+        $this->errorHandler->register();
+        $this->errorHandler->setErrorPagePath($this->config['errorPagePath'] ?? '');
     }
 
     /**

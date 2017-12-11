@@ -88,5 +88,4 @@ class AssetsTest extends MvcTestCase
         $this->assertEquals(\md5(Asset1::class), (new Asset1())->getHash());
         $this->assertTrue($filesystem->exists($webroot . '/assets/e9ce666e3568cae4684577f283a4bc4e'));
     }
-
 }

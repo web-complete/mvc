@@ -63,10 +63,11 @@ class View implements ViewInterface
         $this->templateVars = $vars;
         $result = $this->eval($this->templatePath, $this->templateVars);
         if ($this->layoutPath) {
+            $layoutPath = $this->layoutPath;
+            $this->layoutPath = null;
             $this->layoutVars['view'] = $this;
             $this->layoutVars['content'] = $result;
-            $result = $this->eval($this->layoutPath, $this->layoutVars);
-            $this->layoutPath = null;
+            $result = $this->eval($layoutPath, $this->layoutVars);
             $this->layoutVars = [];
         }
         return $result;
