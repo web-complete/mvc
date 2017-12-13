@@ -5,7 +5,6 @@ namespace tests\unit\controller;
 use DI\ContainerBuilder;
 use Mvkasatkin\mocker\Mocker;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use tests\SomeController;
 use tests\MvcTestCase;
