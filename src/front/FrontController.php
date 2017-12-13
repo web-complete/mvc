@@ -72,7 +72,7 @@ class FrontController
     public function dispatch($method = null, $uri = null): Response
     {
         $method = $method ?? $this->request->getMethod();
-        $uri = $uri ?? $this->request->getRequestUri();
+        $uri = $uri ?? \parse_url($this->request->getRequestUri(), \PHP_URL_PATH);
 
         try {
             $route = $this->router->dispatch($method, $uri);
