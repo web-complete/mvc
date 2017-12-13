@@ -2,13 +2,16 @@
 
 namespace tests\unit\controller;
 
+use DI\ContainerBuilder;
 use Mvkasatkin\mocker\Mocker;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use tests\SomeController;
 use tests\MvcTestCase;
+use WebComplete\core\utils\container\ContainerAdapter;
 use WebComplete\mvc\view\View;
+use WebComplete\mvc\view\ViewInterface;
 
 class AbstractControllerTest extends MvcTestCase
 {
@@ -20,9 +23,10 @@ class AbstractControllerTest extends MvcTestCase
             Mocker::method('layout', 1)->with(['someLayout'])->returnsSelf(),
             Mocker::method('render', 1)->with(['template1', ['a' => 'b']])->returns('some html')
         ]);
-        $request = new Request();
-        $response = new Response();
-        $controller = new SomeController($request, $response, $view);
+        $container = new ContainerAdapter((new ContainerBuilder())->addDefinitions([
+            ViewInterface::class => $view
+        ])->build());
+        $controller = new SomeController($container);
         $response = Mocker::invoke($controller, 'responseHtml', ['template1', ['a' => 'b']]);
         $this->assertInstanceOf(Response::class, $response);
     }
@@ -34,9 +38,10 @@ class AbstractControllerTest extends MvcTestCase
             Mocker::method('layout', 1)->with([null])->returnsSelf(),
             Mocker::method('render', 1)->with(['template1', ['a' => 'b']])->returns('some html')
         ]);
-        $request = new Request();
-        $response = new Response();
-        $controller = new SomeController($request, $response, $view);
+        $container = new ContainerAdapter((new ContainerBuilder())->addDefinitions([
+            ViewInterface::class => $view
+        ])->build());
+        $controller = new SomeController($container);
         $response = Mocker::invoke($controller, 'responseHtmlPartial', ['template1', ['a' => 'b']]);
         $this->assertInstanceOf(Response::class, $response);
     }
@@ -45,9 +50,10 @@ class AbstractControllerTest extends MvcTestCase
     {
         /** @var View $view */
         $view = Mocker::create(View::class);
-        $request = new Request();
-        $response = new Response();
-        $controller = new SomeController($request, $response, $view);
+        $container = new ContainerAdapter((new ContainerBuilder())->addDefinitions([
+            ViewInterface::class => $view
+        ])->build());
+        $controller = new SomeController($container);
         $response = Mocker::invoke($controller, 'responseJson', [['a' => 'b']]);
         $this->assertInstanceOf(Response::class, $response);
     }
@@ -56,9 +62,10 @@ class AbstractControllerTest extends MvcTestCase
     {
         /** @var View $view */
         $view = Mocker::create(View::class);
-        $request = new Request();
-        $response = new Response();
-        $controller = new SomeController($request, $response, $view);
+        $container = new ContainerAdapter((new ContainerBuilder())->addDefinitions([
+            ViewInterface::class => $view
+        ])->build());
+        $controller = new SomeController($container);
         $response = Mocker::invoke($controller, 'responseRedirect', ['aaa']);
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals(302, $response->getStatusCode());
@@ -68,9 +75,10 @@ class AbstractControllerTest extends MvcTestCase
     {
         /** @var View $view */
         $view = Mocker::create(View::class);
-        $request = new Request();
-        $response = new Response();
-        $controller = new SomeController($request, $response, $view);
+        $container = new ContainerAdapter((new ContainerBuilder())->addDefinitions([
+            ViewInterface::class => $view
+        ])->build());
+        $controller = new SomeController($container);
         $response = Mocker::invoke($controller, 'responseNotFound');
         $this->assertInstanceOf(Response::class, $response);
         $this->assertEquals(404, $response->getStatusCode());
@@ -80,9 +88,10 @@ class AbstractControllerTest extends MvcTestCase
     {
         /** @var View $view */
         $view = Mocker::create(View::class);
-        $request = new Request();
-        $response = new Response();
-        $controller = new SomeController($request, $response, $view);
+        $container = new ContainerAdapter((new ContainerBuilder())->addDefinitions([
+            ViewInterface::class => $view
+        ])->build());
+        $controller = new SomeController($container);
         $response = Mocker::invoke($controller, 'responseAccessDenied');
         $this->assertInstanceOf(Response::class, $response);
         $this->assertEquals(403, $response->getStatusCode());

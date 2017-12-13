@@ -2,14 +2,19 @@
 
 namespace WebComplete\mvc\controller;
 
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use WebComplete\core\utils\container\ContainerInterface;
 use WebComplete\mvc\view\ViewInterface;
 
 abstract class AbstractController
 {
 
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
     /**
      * @var ViewInterface
      */
@@ -25,19 +30,15 @@ abstract class AbstractController
     protected $layout;
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param ViewInterface $view
+     * @param ContainerInterface $container
      */
-    public function __construct(
-        Request $request,
-        Response $response,
-        ViewInterface $view
-    ) {
-        $view->setController($this);
-        $this->view = $view;
-        $this->request = $request;
-        $this->response = $response;
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+        $this->view = $this->container->get(ViewInterface::class);
+        $this->request = $this->container->get(Request::class);
+        $this->response = $this->container->get(Response::class);
+        $this->view->setController($this);
     }
 
     /**
