@@ -2,6 +2,9 @@
 
 namespace tests\integration;
 
+use Asset\Asset1;
+use Asset\Asset2;
+use Asset\Asset3;
 use Mvkasatkin\mocker\Mocker;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,6 +31,13 @@ class ApplicationTest extends MvcTestCase
         $config = $application->getConfig();
         $this->assertTrue(\is_array($config));
         $this->assertTrue(isset($config['definitions']));
+    }
+
+    public function testErrorPagePath()
+    {
+        $application = $this->createApplication();
+        $errorHandler = Mocker::getProperty($application, 'errorHandler');
+        $this->assertEquals('/some/error', $errorHandler->getErrorPagePath());
     }
 
     public function testHtmlString()
@@ -180,6 +190,15 @@ class ApplicationTest extends MvcTestCase
     {
         $application = $this->createApplication();
         $view = $application->getContainer()->get(View::class);
+        $asset1 = $application->getContainer()->get(Asset1::class);
+        $asset2 = $application->getContainer()->get(Asset2::class);
+        $asset3 = $application->getContainer()->get(Asset3::class);
+        $asset1->addAssetBefore($asset2);
+        $asset1->addAssetAfter($asset3);
+        $this->assertEquals([Asset2::class => $asset2], $asset1->getAssetsBefore());
+        $this->assertEquals([Asset3::class => $asset3], $asset1->getAssetsAfter());
+        $view->getAssetManager()->registerAsset($asset1);
+        $this->assertEquals('/assets/e9ce666e3568cae4684577f283a4bc4e/some/file', $view->getAssetManager()->getPath(Asset1::class, 'some/file'));
         $this->assertInstanceOf(AssetManager::class, $view->getAssetManager());
     }
 

@@ -7,7 +7,7 @@ return [
         '@app' => \dirname(__DIR__ . '/..', 2),
         '@web' => \dirname(__DIR__ . '/../web', 2),
     ],
-    'routes' => [
+    'routes' => new \WebComplete\mvc\router\Routes([
         ['GET', '/some/string', [\tests\app\controllers\SomeController::class, 'actionString']],
         ['GET', '/some/layout', [\tests\app\controllers\SomeController::class, 'actionLayout']],
         ['GET', '/some/partial', [\tests\app\controllers\SomeController::class, 'actionPartial']],
@@ -21,7 +21,7 @@ return [
         ['GET', '/some/vars', [\tests\app\controllers\SomeController::class, 'actionVars']],
         ['GET', '/some/fail1', [null, 'index']],
         ['GET', '/some/fail2', [\tests\app\controllers\SomeController::class, null]],
-    ],
+    ]),
     'cubesLocations' => [
         '@app/cubes',
     ],
@@ -36,5 +36,6 @@ return [
                 'assets'
             );
         }
-    ]
+    ],
+    'errorPagePath' => '/some/error',
 ];

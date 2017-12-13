@@ -121,7 +121,7 @@ class Routes implements \ArrayAccess, \Iterator
             foreach ((array)$this->config as $k => $route) {
                 if ($route[1] === $beforeRoute) {
                     $k > 1
-                        ? \array_splice($this->config, $k-1, 0, $routeDefinition)
+                        ? \array_splice($this->config, $k, 0, [$routeDefinition])
                         : \array_unshift($this->config, $routeDefinition);
                 }
             }

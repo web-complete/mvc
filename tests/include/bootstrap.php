@@ -7,6 +7,7 @@ include_once 'app/controllers/ErrorController.php';
 include_once 'app/controllers/SomeController.php';
 include_once 'app/assets/Asset1.php';
 include_once 'app/assets/Asset2.php';
+include_once 'app/assets/Asset3.php';
 
 if (!@mkdir(__DIR__ . '/app/cubes') && !is_dir(__DIR__ . '/app/cubes')) {
     throw new RuntimeException(sprintf('Directory "%s" was not created', __DIR__ . '/app/cubes'));
