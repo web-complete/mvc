@@ -17,7 +17,7 @@ class Router
     private $config;
 
     /**
-     * @param array $config
+     * @param Routes $config
      */
     public function __construct(Routes $config)
     {
