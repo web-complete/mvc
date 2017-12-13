@@ -8,6 +8,9 @@ use WebComplete\mvc\exception\Exception;
 class AssetManager
 {
 
+    const PRODUCTION_JS = 'asset.min.js';
+    const PRODUCTION_CSS = 'asset.min.css';
+
     /**
      * @var AbstractAsset[]
      */
@@ -24,17 +27,24 @@ class AssetManager
      * @var Filesystem
      */
     protected $filesystem;
+    protected $isProduction = false;
 
     /**
      * @param Filesystem $filesystem
      * @param string $webRoot
      * @param string $assetDirName
+     * @param bool $isProduction
      */
-    public function __construct(Filesystem $filesystem, string $webRoot, string $assetDirName)
-    {
+    public function __construct(
+        Filesystem $filesystem,
+        string $webRoot,
+        string $assetDirName,
+        bool $isProduction = false
+    ) {
         $this->filesystem = $filesystem;
         $this->webRoot = \rtrim($webRoot, '/');
         $this->assetDirName = $assetDirName;
+        $this->isProduction = $isProduction;
     }
 
     /**
@@ -64,16 +74,20 @@ class AssetManager
      * @param string $assetClass
      * @param $file
      *
+     * @param bool $absolute
+     *
      * @return string
      * @throws Exception
      */
-    public function getPath(string $assetClass, $file): string
+    public function getPath(string $assetClass, $file, bool $absolute = false): string
     {
         if (!isset($this->assets[$assetClass])) {
             throw new Exception('Asset ' . $assetClass . ' is not registered');
         }
 
-        return $this->getWebDir($this->assets[$assetClass]) . \ltrim($file, '/');
+        return $absolute
+            ? $this->webRoot . $this->getWebDir($this->assets[$assetClass]) . \ltrim($file, '/')
+            : $this->getWebDir($this->assets[$assetClass]) . \ltrim($file, '/');
     }
 
     /**
@@ -98,12 +112,34 @@ class AssetManager
     {
         $result = [];
         foreach ($this->assets as $asset) {
-            $links = $this->getLinks($asset, $asset->js());
+            $productionJs = $this->getWebDir($asset) . self::PRODUCTION_JS;
+            if ($this->isProduction() && \file_exists($this->webRoot . $productionJs)) {
+                $links = $this->getLinks($asset, $asset->externalJs());
+                $links[] = $productionJs;
+            } else {
+                $links = $this->getLinks($asset, $asset->js());
+            }
             foreach ($links as $link) {
                 $result[] = '<script src="' . $link . '"></script>';
             }
         }
         return \implode('', $result);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isProduction(): bool
+    {
+        return $this->isProduction;
+    }
+
+    /**
+     * @param bool $isProduction
+     */
+    public function setIsProduction(bool $isProduction)
+    {
+        $this->isProduction = $isProduction;
     }
 
     /**
