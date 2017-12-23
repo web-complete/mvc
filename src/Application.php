@@ -91,9 +91,7 @@ class Application
             $this->getContainer()->set($def, $value);
         }
 
-        foreach ($cubeManager->getCubes() as $cube) {
-            $cube->bootstrap($this->container);
-        }
+        $cubeManager->bootstrap($this->container);
     }
 
     /**
