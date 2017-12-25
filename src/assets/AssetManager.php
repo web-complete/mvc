@@ -113,9 +113,10 @@ class AssetManager
         $result = [];
         foreach ($this->assets as $asset) {
             $productionJs = $this->getWebDir($asset) . self::PRODUCTION_JS;
-            if ($this->isProduction() && \file_exists($this->webRoot . $productionJs)) {
+            $productionJsFile = $this->webRoot . $productionJs;
+            if ($this->isProduction() && \file_exists($productionJsFile)) {
                 $links = $this->getLinks($asset, $asset->externalJs());
-                $links[] = $productionJs;
+                $links[] = $productionJs . '?' . \filemtime($productionJsFile);
             } else {
                 $links = $this->getLinks($asset, $asset->js());
             }

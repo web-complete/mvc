@@ -30,7 +30,8 @@ class AssetsTest extends MvcTestCase
         }
 
         $assetManager = new AssetManager($filesystem, $webroot, 'assets');
-        $assetManager->registerAsset(new Asset1());
+        $asset = new Asset1();
+        $assetManager->registerAsset($asset);
         $ts1 = filemtime($webroot . '/assets/e9ce666e3568cae4684577f283a4bc4e/css/style.css');
         $ts2 = filemtime($webroot . '/assets/e9ce666e3568cae4684577f283a4bc4e/js/script.js');
         $expected = '<link rel="stylesheet" href="/assets/e9ce666e3568cae4684577f283a4bc4e/css/style.css?' . $ts1 . '">'
@@ -41,6 +42,23 @@ class AssetsTest extends MvcTestCase
         $this->assertEquals($expected, $assetManager->applyJs());
         $this->assertEquals(\md5(Asset1::class), (new Asset1())->getHash());
         $this->assertTrue($filesystem->exists($webroot . '/assets/e9ce666e3568cae4684577f283a4bc4e'));
+
+        $this->assertEquals(['http://www.webcomplete.ru/css/style2.css'], $asset->externalCss());
+        $this->assertEquals(['/css/style.css'], $asset->internalCss());
+        $this->assertEquals(['//www.webcomplete.ru/js/script2.js'], $asset->externalJs());
+        $this->assertEquals(['js/script.js'], $asset->internalJs());
+
+        $assetManager->setIsProduction(true);
+        $expected = '<link rel="stylesheet" href="/assets/e9ce666e3568cae4684577f283a4bc4e/css/style.css?' . $ts1 . '">'
+            . '<link rel="stylesheet" href="http://www.webcomplete.ru/css/style2.css">';
+        $this->assertEquals($expected, $assetManager->applyCss());
+        $prodJs = $webroot . '/assets/e9ce666e3568cae4684577f283a4bc4e/asset.min.js';
+        \file_put_contents($prodJs, '');
+        $ts3 = \filemtime($prodJs);
+        $expected = '<script src="//www.webcomplete.ru/js/script2.js"></script>'
+            . '<script src="/assets/e9ce666e3568cae4684577f283a4bc4e/asset.min.js?' . $ts3 . '"></script>';
+        $this->assertEquals($expected, $assetManager->applyJs());
+        @\unlink($prodJs);
     }
 
     public function testAsset2()
