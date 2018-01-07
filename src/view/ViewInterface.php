@@ -2,6 +2,7 @@
 
 namespace WebComplete\mvc\view;
 
+use WebComplete\core\utils\container\ContainerInterface;
 use WebComplete\mvc\assets\AssetManager;
 use WebComplete\mvc\controller\AbstractController;
 
@@ -25,6 +26,16 @@ interface ViewInterface
      * @throws \Exception
      */
     public function render($path, array $vars = []): string;
+
+    /**
+     * @param ContainerInterface $container
+     */
+    public function setContainer(ContainerInterface $container);
+
+    /**
+     * @return ContainerInterface
+     */
+    public function getContainer(): ContainerInterface;
 
     /**
      * @param AbstractController $controller

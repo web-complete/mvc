@@ -3,6 +3,7 @@
 namespace WebComplete\mvc\view;
 
 use WebComplete\core\utils\alias\AliasService;
+use WebComplete\core\utils\container\ContainerInterface;
 use WebComplete\mvc\assets\AssetManager;
 use WebComplete\mvc\controller\AbstractController;
 
@@ -19,6 +20,10 @@ class View implements ViewInterface
      * @var AliasService|null
      */
     private $aliasService;
+    /**
+     * @var ContainerInterface|null
+     */
+    private $container;
     /**
      * @var AssetManager
      */
@@ -85,6 +90,26 @@ class View implements ViewInterface
         \ob_start();
         require $path;
         return \ob_get_clean();
+    }
+
+    /**
+     * @param ContainerInterface $container
+     */
+    public function setContainer(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
+    /**
+     * @return ContainerInterface
+     */
+    public function getContainer(): ContainerInterface
+    {
+        if (!$this->container) {
+            global $application;
+            $this->setContainer($application->getContainer());
+        }
+        return $this->container;
     }
 
     /**
