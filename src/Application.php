@@ -4,6 +4,8 @@ namespace WebComplete\mvc;
 
 use DI\ContainerBuilder;
 use DI\Scope;
+use Monolog\ErrorHandler as MonologErrorHandler;
+use Monolog\Logger;
 use Symfony\Component\HttpFoundation\Request;
 use WebComplete\core\cube\CubeManager;
 use WebComplete\core\utils\alias\AliasHelper;
@@ -13,6 +15,7 @@ use WebComplete\core\utils\container\ContainerInterface;
 use WebComplete\core\utils\hydrator\Hydrator;
 use WebComplete\core\utils\hydrator\HydratorInterface;
 use WebComplete\mvc\errorHandler\ErrorHandler;
+use WebComplete\mvc\logger\LoggerService;
 use WebComplete\mvc\router\Router;
 use WebComplete\mvc\view\View;
 use WebComplete\mvc\view\ViewInterface;
@@ -91,6 +94,8 @@ class Application
             $this->getContainer()->set($def, $value);
         }
 
+        $commonLogger = $this->container->get(LoggerService::class)->get('*');
+        MonologErrorHandler::register($commonLogger, [], Logger::CRITICAL, Logger::EMERGENCY);
         $cubeManager->bootstrap($this->container);
     }
 
