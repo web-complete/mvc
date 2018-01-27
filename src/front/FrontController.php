@@ -3,6 +3,8 @@
 namespace WebComplete\mvc\front;
 
 use WebComplete\core\utils\container\ContainerInterface;
+use WebComplete\core\utils\event\Observable;
+use WebComplete\core\utils\traits\TraitObservable;
 use WebComplete\mvc\controller\AbstractController;
 use WebComplete\mvc\router\Route;
 use WebComplete\mvc\router\Router;
@@ -12,9 +14,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-class FrontController
+class FrontController implements Observable
 {
-    const ERROR_CONTROLLER_KEY = 'errorController';
+    use TraitObservable;
+
+    const ERROR_CONTROLLER_KEY  = 'errorController';
+    const EVENT_DISPATCH_BEFORE = 'fc_dispatch_before';
+    const EVENT_DISPATCH_AFTER  = 'fc_dispatch_after';
 
     public static $errorActions = [
         403 => 'action403',
@@ -73,6 +79,8 @@ class FrontController
     {
         $method = $method ?? $this->request->getMethod();
         $uri = $uri ?? \parse_url($this->request->getRequestUri(), \PHP_URL_PATH);
+        $eventData = ['method' => $method, 'url' => $this->request->getRequestUri()];
+        $this->trigger(self::EVENT_DISPATCH_BEFORE, $eventData);
 
         try {
             $route = $this->router->dispatch($method, $uri);
@@ -88,6 +96,7 @@ class FrontController
             $this->processError($e, 500);
         }
         $this->response->prepare($this->request);
+        $this->trigger(self::EVENT_DISPATCH_AFTER, $eventData);
         return $this->response;
     }
 
