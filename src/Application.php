@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use WebComplete\core\cube\CubeManager;
 use WebComplete\core\utils\alias\AliasHelper;
 use WebComplete\core\utils\alias\AliasService;
+use WebComplete\core\utils\cache\Cache;
+use WebComplete\core\utils\cache\CacheService;
 use WebComplete\core\utils\container\ContainerAdapter;
 use WebComplete\core\utils\container\ContainerInterface;
 use WebComplete\core\utils\hydrator\Hydrator;
@@ -94,6 +96,7 @@ class Application
             $this->getContainer()->set($def, $value);
         }
 
+        Cache::setCacheService($this->container->get(CacheService::class));
         $commonLogger = $this->container->get(LoggerService::class)->get('*');
         MonologErrorHandler::register($commonLogger, [], Logger::CRITICAL, Logger::EMERGENCY);
         $cubeManager->bootstrap($this->container);
