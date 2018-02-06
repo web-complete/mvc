@@ -2,10 +2,12 @@
 
 namespace WebComplete\mvc;
 
+use cubes\system\logger\Log;
 use DI\ContainerBuilder;
 use DI\Scope;
 use Monolog\ErrorHandler as MonologErrorHandler;
 use Monolog\Logger;
+use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\Request;
 use WebComplete\core\cube\CubeManager;
 use WebComplete\core\utils\alias\AliasHelper;
@@ -55,6 +57,11 @@ class Application
      */
     protected function initErrorHandler()
     {
+        register_shutdown_function(function(){
+            if ($error = error_get_last()) {
+                Log::log(Logger::EMERGENCY, \json_encode($error));
+            }
+        });
         $this->errorHandler = new ErrorHandler();
         $this->errorHandler->register();
         $this->errorHandler->setErrorPagePath($this->config['errorPagePath'] ?? '');
