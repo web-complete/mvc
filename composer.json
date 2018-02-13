@@ -22,7 +22,7 @@
     "symfony/http-foundation": "^3",
     "symfony/filesystem": "^3.3",
     "nikic/fast-route": "^1",
-    "web-complete/core": "*",
+    "web-complete/core": "dev-master",
     "monolog/monolog": "^1",
     "php-di/php-di": "^5"
   },

@@ -2,23 +2,19 @@
 
 namespace WebComplete\mvc;
 
-use cubes\system\logger\Log;
 use DI\ContainerBuilder;
 use DI\Scope;
 use Monolog\ErrorHandler as MonologErrorHandler;
 use Monolog\Logger;
-use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\Request;
 use WebComplete\core\cube\CubeManager;
 use WebComplete\core\utils\alias\AliasHelper;
 use WebComplete\core\utils\alias\AliasService;
-use WebComplete\core\utils\cache\Cache;
-use WebComplete\core\utils\cache\CacheService;
-use WebComplete\core\utils\container\ContainerAdapter;
-use WebComplete\core\utils\container\ContainerInterface;
 use WebComplete\core\utils\hydrator\Hydrator;
 use WebComplete\core\utils\hydrator\HydratorInterface;
 use WebComplete\mvc\errorHandler\ErrorHandler;
+use WebComplete\core\utils\container\ContainerAdapter;
+use WebComplete\core\utils\container\ContainerInterface;
 use WebComplete\mvc\logger\LoggerService;
 use WebComplete\mvc\router\Router;
 use WebComplete\mvc\view\View;
@@ -38,6 +34,7 @@ class Application
      * @param bool $initErrorHandler
      *
      * @throws \Exception
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function __construct(array $config, $initErrorHandler = true)
     {
@@ -46,48 +43,19 @@ class Application
             $this->initErrorHandler();
         }
         $definitions = \array_merge(
-            $this->init(),
+            $this->getApplicationDefinitions(),
             $this->config['definitions'] ?? []
         );
         $this->initContainer($definitions);
-        $this->afterInit();
+        $this->initCubes();
+        $this->bootstrapCubes();
     }
 
     /**
-     */
-    protected function initErrorHandler()
-    {
-        register_shutdown_function(function(){
-            if ($error = error_get_last()) {
-                Log::log(Logger::EMERGENCY, \json_encode($error));
-            }
-        });
-        $this->errorHandler = new ErrorHandler();
-        $this->errorHandler->register();
-        $this->errorHandler->setErrorPagePath($this->config['errorPagePath'] ?? '');
-    }
-
-    /**
-     * @return array
      * @throws \Exception
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    protected function init(): array
-    {
-        $aliasService = new AliasService($this->config['aliases'] ?? []);
-        $applicationConfig = new ApplicationConfig($this->config);
-
-        $definitions = [
-            ApplicationConfig::class => $applicationConfig,
-            AliasService::class => $aliasService,
-            Router::class => new Router($this->config['routes'] ?? []),
-            Request::class => Request::createFromGlobals(),
-            ViewInterface::class => \DI\object(View::class)->scope(Scope::PROTOTYPE),
-            HydratorInterface::class => \DI\object(Hydrator::class),
-        ];
-        return $definitions;
-    }
-
-    protected function afterInit()
+    protected function initCubes()
     {
         $aliasService = $this->container->get(AliasService::class);
         AliasHelper::setInstance($aliasService);
@@ -102,11 +70,25 @@ class Application
         foreach ($cubesDefinitions as $def => $value) {
             $this->getContainer()->set($def, $value);
         }
+    }
 
-        Cache::setCacheService($this->container->get(CacheService::class));
+    /**
+     */
+    protected function bootstrapCubes()
+    {
         $commonLogger = $this->container->get(LoggerService::class)->get('*');
         MonologErrorHandler::register($commonLogger, [], Logger::CRITICAL, Logger::EMERGENCY);
+        $cubeManager = $this->getContainer()->get(CubeManager::class);
         $cubeManager->bootstrap($this->container);
+    }
+
+    /**
+     */
+    protected function initErrorHandler()
+    {
+        $this->errorHandler = new ErrorHandler();
+        $this->errorHandler->register();
+        $this->errorHandler->setErrorPagePath($this->config['errorPagePath'] ?? '');
     }
 
     /**
@@ -146,5 +128,26 @@ class Application
         $container = (new ContainerBuilder())->addDefinitions($definitions)->build();
         $this->container = $container->get(ContainerInterface::class);
         $this->container->setContainer($container);
+    }
+
+    /**
+     * @return array
+     * @throws \WebComplete\core\utils\alias\AliasException
+     */
+    protected function getApplicationDefinitions(): array
+    {
+        $aliasService = new AliasService($this->config['aliases'] ?? []);
+        $applicationConfig = new ApplicationConfig($this->config);
+        $routes = $this->config['routes'];
+
+        $definitions = [
+            ApplicationConfig::class => $applicationConfig,
+            AliasService::class => $aliasService,
+            Router::class => new Router($routes),
+            Request::class => Request::createFromGlobals(),
+            ViewInterface::class => \DI\object(View::class)->scope(Scope::PROTOTYPE),
+            HydratorInterface::class => \DI\object(Hydrator::class),
+        ];
+        return $definitions;
     }
 }

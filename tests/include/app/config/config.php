@@ -1,6 +1,7 @@
 <?php
 
 use Symfony\Component\Filesystem\Filesystem;
+use WebComplete\core\utils\cache\CacheService;
 
 return [
     'aliases' => [
@@ -35,7 +36,12 @@ return [
                 $aliasService->get('@web'),
                 'assets'
             );
-        }
+        },
+        CacheService::class => function () {
+            $systemCache = new \Symfony\Component\Cache\Adapter\NullAdapter();
+            $userCache = new \Symfony\Component\Cache\Adapter\NullAdapter();
+            return new CacheService($systemCache, $userCache);
+        },
     ],
     'errorPagePath' => '/some/error',
 ];
