@@ -23,8 +23,7 @@
     "symfony/filesystem": "^3.3",
     "nikic/fast-route": "^1",
     "web-complete/core": "dev-master",
-    "monolog/monolog": "^1",
-    "php-di/php-di": "^5"
+    "monolog/monolog": "^1"
   },
   "require-dev": {
     "phpunit/phpunit": "^6",

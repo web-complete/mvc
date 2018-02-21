@@ -27,8 +27,8 @@ return [
         '@app/cubes',
     ],
     'definitions' => [
-        'errorController' => \DI\object(\tests\app\controllers\ErrorController::class),
-        \Psr\SimpleCache\CacheInterface::class => \DI\object(\Symfony\Component\Cache\Simple\NullCache::class),
+        'errorController' => \DI\autowire(\tests\app\controllers\ErrorController::class),
+        \Psr\SimpleCache\CacheInterface::class => \DI\autowire(\Symfony\Component\Cache\Simple\NullCache::class),
         \WebComplete\mvc\assets\AssetManager::class => function (\DI\Container $di) {
             $aliasService = $di->get(\WebComplete\core\utils\alias\AliasService::class);
             return new \WebComplete\mvc\assets\AssetManager(

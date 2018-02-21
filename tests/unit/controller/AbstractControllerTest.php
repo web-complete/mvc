@@ -4,6 +4,7 @@ namespace tests\unit\controller;
 
 use DI\ContainerBuilder;
 use Mvkasatkin\mocker\Mocker;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use tests\SomeController;
@@ -22,9 +23,7 @@ class AbstractControllerTest extends MvcTestCase
             Mocker::method('layout', 1)->with(['someLayout'])->returnsSelf(),
             Mocker::method('render', 1)->with(['template1', ['a' => 'b']])->returns('some html')
         ]);
-        $container = new ContainerAdapter((new ContainerBuilder())->addDefinitions([
-            ViewInterface::class => $view
-        ])->build());
+        $container = $this->createContainer($view);
         $controller = new SomeController($container);
         $response = Mocker::invoke($controller, 'responseHtml', ['template1', ['a' => 'b']]);
         $this->assertInstanceOf(Response::class, $response);
@@ -37,9 +36,7 @@ class AbstractControllerTest extends MvcTestCase
             Mocker::method('layout', 1)->with([null])->returnsSelf(),
             Mocker::method('render', 1)->with(['template1', ['a' => 'b']])->returns('some html')
         ]);
-        $container = new ContainerAdapter((new ContainerBuilder())->addDefinitions([
-            ViewInterface::class => $view
-        ])->build());
+        $container = $this->createContainer($view);
         $controller = new SomeController($container);
         $response = Mocker::invoke($controller, 'responseHtmlPartial', ['template1', ['a' => 'b']]);
         $this->assertInstanceOf(Response::class, $response);
@@ -49,9 +46,7 @@ class AbstractControllerTest extends MvcTestCase
     {
         /** @var View $view */
         $view = Mocker::create(View::class);
-        $container = new ContainerAdapter((new ContainerBuilder())->addDefinitions([
-            ViewInterface::class => $view
-        ])->build());
+        $container = $this->createContainer($view);
         $controller = new SomeController($container);
         $response = Mocker::invoke($controller, 'responseJson', [['a' => 'b']]);
         $this->assertInstanceOf(Response::class, $response);
@@ -61,9 +56,7 @@ class AbstractControllerTest extends MvcTestCase
     {
         /** @var View $view */
         $view = Mocker::create(View::class);
-        $container = new ContainerAdapter((new ContainerBuilder())->addDefinitions([
-            ViewInterface::class => $view
-        ])->build());
+        $container = $this->createContainer($view);
         $controller = new SomeController($container);
         $response = Mocker::invoke($controller, 'responseRedirect', ['aaa']);
         $this->assertInstanceOf(RedirectResponse::class, $response);
@@ -74,9 +67,7 @@ class AbstractControllerTest extends MvcTestCase
     {
         /** @var View $view */
         $view = Mocker::create(View::class);
-        $container = new ContainerAdapter((new ContainerBuilder())->addDefinitions([
-            ViewInterface::class => $view
-        ])->build());
+        $container = $this->createContainer($view);
         $controller = new SomeController($container);
         $response = Mocker::invoke($controller, 'responseNotFound');
         $this->assertInstanceOf(Response::class, $response);
@@ -87,12 +78,26 @@ class AbstractControllerTest extends MvcTestCase
     {
         /** @var View $view */
         $view = Mocker::create(View::class);
-        $container = new ContainerAdapter((new ContainerBuilder())->addDefinitions([
-            ViewInterface::class => $view
-        ])->build());
+        $container = $this->createContainer($view);
         $controller = new SomeController($container);
         $response = Mocker::invoke($controller, 'responseAccessDenied');
         $this->assertInstanceOf(Response::class, $response);
         $this->assertEquals(403, $response->getStatusCode());
+    }
+
+    protected function createContainer(View $view)
+    {
+        $container = new ContainerAdapter((new ContainerBuilder())->addDefinitions([
+            View::class => $view,
+            \WebComplete\mvc\assets\AssetManager::class => function (\DI\Container $di) {
+                return new \WebComplete\mvc\assets\AssetManager(
+                    new Filesystem(),
+                    __DIR__,
+                    'assets',
+                    false
+                );
+            },
+        ])->build());
+        return $container;
     }
 }

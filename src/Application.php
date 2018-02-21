@@ -3,7 +3,6 @@
 namespace WebComplete\mvc;
 
 use DI\ContainerBuilder;
-use DI\Scope;
 use Monolog\ErrorHandler as MonologErrorHandler;
 use Monolog\Logger;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,8 +18,6 @@ use WebComplete\core\utils\container\ContainerAdapter;
 use WebComplete\core\utils\container\ContainerInterface;
 use WebComplete\mvc\logger\LoggerService;
 use WebComplete\mvc\router\Router;
-use WebComplete\mvc\view\View;
-use WebComplete\mvc\view\ViewInterface;
 
 class Application
 {
@@ -127,7 +124,7 @@ class Application
      */
     protected function initContainer($definitions)
     {
-        $definitions[ContainerInterface::class] = \DI\object(ContainerAdapter::class);
+        $definitions[ContainerInterface::class] = \DI\autowire(ContainerAdapter::class);
         $container = (new ContainerBuilder())->addDefinitions($definitions)->build();
         $this->container = $container->get(ContainerInterface::class);
         $this->container->setContainer($container);
@@ -148,8 +145,7 @@ class Application
             AliasService::class => $aliasService,
             Router::class => new Router($routes),
             Request::class => Request::createFromGlobals(),
-            ViewInterface::class => \DI\object(View::class)->scope(Scope::PROTOTYPE),
-            HydratorInterface::class => \DI\object(Hydrator::class),
+            HydratorInterface::class => \DI\autowire(Hydrator::class),
         ];
         return $definitions;
     }
