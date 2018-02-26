@@ -31,19 +31,19 @@ class FrontController implements Observable
     /**
      * @var Request
      */
-    private $request;
+    protected $request;
     /**
      * @var Response
      */
-    private $response;
+    protected $response;
     /**
      * @var Router
      */
-    private $router;
+    protected $router;
     /**
      * @var ContainerInterface
      */
-    private $controllerContainer;
+    protected $controllerContainer;
 
     /**
      * @param Router $router
