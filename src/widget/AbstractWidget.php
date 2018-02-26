@@ -3,6 +3,7 @@
 namespace WebComplete\mvc\widget;
 
 use WebComplete\core\utils\container\ContainerInterface;
+use WebComplete\mvc\view\View;
 use WebComplete\mvc\view\ViewInterface;
 
 abstract class AbstractWidget
@@ -23,7 +24,7 @@ abstract class AbstractWidget
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->view = $this->container->get(ViewInterface::class);
+        $this->view = $this->container->get(View::class);
     }
 
     /**
